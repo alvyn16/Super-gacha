@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "alvyn16 (Super Gacha port creator and maintainer)"
+  ],
+  "contributors": [
+    "XiaoJin / Wang-Xiao-Jing (original GachaAddiction creator)"
+  ],
+  "contact": {
+    "homepage": "https://github.com/alvyn16/Super-gacha",
+    "sources": "https://github.com/alvyn16/Super-gacha",
+    "issues": "https://github.com/alvyn16/Super-gacha/issues"
+  },
+  "license": "${mod_license}",
+  "icon": "assets/${mod_id}/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "xiaojin.gachaaddiction.GachaAddiction"
+    ],
+    "client": [
+      "xiaojin.gachaaddiction.GachaAddictionClient"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.lootr.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "lootr": "*"
+  }
+}

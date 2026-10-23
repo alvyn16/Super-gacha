@@ -1,0 +1,30 @@
+{
+  "required": true,
+  "package": "xiaojin.gachaaddiction.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractContainerMenuMixin",
+    "AbstractMinecartContainerMixin",
+    "ChestBlock_2_1Mixin",
+    "RandomizableContainerBlockEntityMixin",
+    "ServerPlayerMixin",
+    "accessor.LootItemAccessor",
+    "accessor.LootPoolAccessor",
+    "accessor.UniformContainerBaseAccessor",
+    "accessor.LootTableAccessor"
+  ],
+  "client": [
+    "accessor.ScreenAccessor",
+    "client.ClientPacketListenerMixin",
+    "client.GuiMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
+}

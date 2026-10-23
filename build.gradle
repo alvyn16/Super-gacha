@@ -1,0 +1,135 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'java-library'
+    id 'maven-publish'
+    id 'idea'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_archive_name
+}
+
+repositories {
+    mavenLocal()
+
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content { includeGroup "maven.modrinth" }
+    }
+
+    mavenCentral()
+}
+
+loom {
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            programArg '--nogui'
+        }
+        configureEach {
+            vmArgs "-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition"
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+
+    // 26.3 的 intermediary 映射为空（官方名即运行时名），Loom 在这种情况下不再提供
+    // mod* 这组重映射配置，所以按实际存在的名字挑一个。
+    def pick = { String... names -> names.find { configurations.findByName(it) != null } }
+    def modImpl = pick('modImplementation', 'implementation')
+    def modCompile = pick('modCompileOnly', 'compileOnly')
+    def modRuntime = pick('modLocalRuntime', 'localRuntime', 'runtimeOnly')
+
+    add(modImpl, "net.fabricmc:fabric-loader:${loader_version}")
+    add(modImpl, "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")
+
+    // Lootr stays optional at runtime.
+    add(modCompile, "maven.modrinth:lootr:${lootr_version}")
+    if (!providers.gradleProperty('withoutLootr').isPresent()) {
+        add(modRuntime, "maven.modrinth:lootr:${lootr_version}")
+    }
+}
+
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'gachaaddiction-test'
+        enableGameTests = true
+        enableClientGameTests = true
+    }
+}
+
+tasks.register('listConfigs') {
+    doLast { configurations.names.toSorted().each { println "CONFIG: $it" } }
+}
+
+processResources {
+    def props = [
+            mod_id         : mod_id,
+            mod_name       : mod_name,
+            mod_license    : mod_license,
+            mod_version    : mod_version,
+            mod_description: mod_description,
+            loader_version : loader_version,
+            minecraft_version: minecraft_version,
+    ]
+    inputs.properties props
+
+    filesMatching("fabric.mod.json") {
+        expand props
+    }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 25
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${mod_id}" }
+    }
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifactId = mod_id
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

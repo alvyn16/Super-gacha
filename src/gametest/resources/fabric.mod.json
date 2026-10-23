@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "gachaaddiction-test",
+  "version": "1.0.0",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "xiaojin.gachaaddiction.GachaServerGameTest"
+    ],
+    "fabric-client-gametest": [
+      "xiaojin.gachaaddiction.GachaClientGameTest"
+    ]
+  }
+}
