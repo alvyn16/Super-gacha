@@ -74,6 +74,12 @@ fabricApi {
     }
 }
 
+// These server tests exercise vanilla containers. Lootr converts those containers;
+// its integration is verified separately by the client game test with Lootr loaded.
+loom.runs.named('gameTest') {
+    vmArg '-Dfabric.debug.disableModIds=lootr,resourcefulconfig'
+}
+
 tasks.register('listConfigs') {
     doLast { configurations.names.toSorted().each { println "CONFIG: $it" } }
 }
